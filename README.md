@@ -1,4 +1,4 @@
 facebook-cli
 ============
 
-Command line client for Facebook
+Command line interface for Facebook
