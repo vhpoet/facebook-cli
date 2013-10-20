@@ -1,0 +1,25 @@
+{
+  "name": "facebook-cli",
+  "version": "0.0.1",
+  "description": "Command line interface for facebook",
+  "keywords": "facebook, cli",
+  "homepage": "https://github.com/vhpoet/facebook-cli",
+  "bugs": "https://github.com/vhpoet/facebook-cli/issues",
+  "license": "MIT",
+  "author": "Vahe Hovhannisyan <vhpoet@gmail.com> (http://vahehovhannisyan.com)",
+  "bin": {
+    "fb": "./facebook-cli.js"
+  },
+  "repository": {
+    "type" : "git",
+    "url" : "git://github.com/vhpoet/facebook-cli.git"
+  },
+  "dependencies": {
+    "facebook-node-sdk": ">= 0.2.0",
+    "cli": ""
+  },
+  "readmeFilename": "README.md",
+  "engines": {
+    "node": ">=0.10.20"
+  }
+}
