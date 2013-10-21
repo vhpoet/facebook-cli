@@ -1,20 +1,19 @@
 var sdk = require('facebook-node-sdk');
-    config = require('./config');
 
-// Connect to facebook
-var api = new sdk({
-  appID: config.appID,
-  secret: config.secret
-}).setAccessToken(config.accessToken);
+var api;
 
 var facebook = {};
 
-facebook.cmd = {};
+// Connect to facebook
+facebook.init = function(appId,secret,token) {
+  api = new sdk({
+    appID: appId,
+    secret: secret
+  }).setAccessToken(token);
+};
 
 // $ facebook me
-facebook.cmd.me = function () {
-  console.log("hey that's me");
-
+facebook.me = function () {
   api.api('/me', function(err, data) {
     if (err) {
       console.log(err);
@@ -26,12 +25,11 @@ facebook.cmd.me = function () {
 };
 
 // $ facebook post "message"
-facebook.cmd.post = function(args) {
-  api.api('/me/feed', 'post', {'message':args[1]}, function(err,data) {
+facebook.post = function(message) {
+  api.api('/me/feed', 'post', {'message':message}, function(err,data) {
     if (data)
       console.log('data',data);
   });
 };
-
 
 module.exports = facebook;

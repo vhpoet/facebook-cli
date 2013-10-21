@@ -16,7 +16,9 @@
   },
   "dependencies": {
     "facebook-node-sdk": ">= 0.2.0",
-    "cli": ""
+    "commander": ">= 2.0.0",
+    "prompt": ">= 0.2.11",
+    "nconf": ">= 0.6.7"
   },
   "readmeFilename": "README.md",
   "engines": {
