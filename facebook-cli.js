@@ -10,8 +10,7 @@ var program = require('commander'),
     nconf = require('nconf');
 
 // Config file
-// TODO can we use this path? does it refer to the config.json in script folder?
-var configFile = 'config.json';
+var configFile = __dirname + '/config.json';
 
 /**
  * Configuration file settings
