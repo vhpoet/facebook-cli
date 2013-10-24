@@ -85,7 +85,12 @@ program
   .action(function(){
     checkConfigs();
 
-    fb.me();
+    fb.me(function(data){
+      console.log();
+      console.log('You are ' + data.name + '. Your ID is ' + data.id);
+      console.log('Link to your profile: https://www.facebook.com/' + data.username);
+      console.log();
+    });
   });
 
 program
@@ -95,7 +100,12 @@ program
     checkConfigs();
 
     // TODO msg without " quotes
-    fb.post(msg);
+    fb.post(msg,function(data){
+      console.log();
+      console.log('Status update has been posted.');
+      console.log('Here is the link: https://www.facebook.com/' + data.id);
+      console.log();
+    });
   });
 
 program

@@ -13,22 +13,28 @@ facebook.init = function(appId,secret,token) {
 };
 
 // $ facebook me
-facebook.me = function () {
+facebook.me = function (callback) {
   api.api('/me', function(err, data) {
     if (err) {
       console.log(err);
       return;
     }
 
-    console.log('You are ' + data.name + ", your Facebook ID is " + data.id);
+    if (data)
+      callback(data);
   });
 };
 
 // $ facebook post "message"
-facebook.post = function(message) {
+facebook.post = function(message,callback) {
   api.api('/me/feed', 'post', {'message':message}, function(err,data) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+
     if (data)
-      console.log('data',data);
+      callback(data);
   });
 };
 
