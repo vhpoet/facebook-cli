@@ -10,7 +10,8 @@ var program = require('commander'),
     fb = require('./facebook'),
     nconf = require('nconf'),
     httpget = require('http-get'),
-    async = require('async');
+    async = require('async'),
+    progress = require('progress');
 
 // Config file
 var configFile = __dirname + '/config.json';
@@ -123,25 +124,32 @@ program
 
     fb.downloadAlbums(user,function(albums){
       async.eachSeries(albums,function(album, albumCallback){
-        async.eachLimit(album.photos, 20, function(photo,photoCallback){
+        var bar = new progress('[:bar :percent] Downloaded :current/:total',{
+          total: album.photos.length,
+          complete: '=',
+          incomplete: ' ',
+          width: 50,
+          clear: true
+        });
+
+        async.eachLimit(album.photos, 15, function(photo,photoCallback){
           // Create album folder
           fs.mkdir('photos/' + album.name,function(){
             // Download and save photo
             // TODO real extension
             httpget.get(photo.source, 'photos/' + album.name + '/' + photo.id + ".jpg", function(err) {
+              // TODO better output
               if (err)
                 console.log(err);
 
               // TODO sometimes hangs here
-              console.log('photo saved!');
+              bar.tick();
 
               photoCallback();
             });
           });
         }, function(){
-          console.log();
-          console.log('album finished');
-          console.log();
+          console.log(album.name.cyan + ' downloaded successfully.');
 
           albumCallback();
         })
