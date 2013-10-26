@@ -5,9 +5,12 @@
  */
 var program = require('commander'),
     prompt = require('prompt'),
+    https = require('https'),
     fs = require('fs'),
     fb = require('./facebook'),
-    nconf = require('nconf');
+    nconf = require('nconf'),
+    httpget = require('http-get'),
+    async = require('async');
 
 // Config file
 var configFile = __dirname + '/config.json';
@@ -17,6 +20,7 @@ var configFile = __dirname + '/config.json';
  */
 nconf.file({ file: configFile });
 
+// TODO Get long live access_token
 var checkConfigs = function(){
   if (nconf.get('appId')) {
     fb.init(nconf.get('appId'),nconf.get('secret'),nconf.get('token'));
@@ -65,7 +69,7 @@ program
     console.log("\nPlease enter your facebook account details \n".grey);
 
     prompt.start();
-    prompt.get(schema, function (err, result) {
+    prompt.get(schema,function (err,result) {
       // TODO validate via remote call
       nconf.set('appId',result.appId);
       nconf.set('secret',result.secret);
@@ -79,6 +83,7 @@ program
     });
   });
 
+// me
 program
   .command('me')
   .description('Get info about current user')
@@ -88,25 +93,68 @@ program
     fb.me(function(data){
       console.log();
       console.log('You are '.grey + data.name.bold.cyan + '. Your ID is '.grey + data.id.bold.cyan);
-      console.log(('Link to your profile: ' + ('https://www.facebook.com/' + data.username).underline).grey);
+      console.log(('Link to your profile: ' + ('https://facebook.com/' + data.username).underline).grey);
       console.log();
     });
   });
 
+// post
 program
   .command('post <msg>')
   .description('Post status update on your wall')
   .action(function(msg){
     checkConfigs();
 
-    // TODO msg without " quotes
+    // TODO msg without " quotes. Also check all other calls.
     fb.post(msg,function(data){
       console.log();
       console.log('Status update has been posted.'.green);
-      console.log(('Here is the link: ' + ('https://www.facebook.com/' + data.id).underline).grey);
+      console.log(('Here is the link: ' + ('https://facebook.com/' + data.id).underline).grey);
       console.log();
     });
   });
+
+// download photos
+program
+  .command('download <user>')
+  .description('Download user photo albums')
+  .action(function(user){
+    checkConfigs();
+
+    fb.downloadAlbums(user,function(albums){
+      async.eachSeries(albums,function(album, albumCallback){
+        async.eachLimit(album.photos, 20, function(photo,photoCallback){
+          // Create album folder
+          fs.mkdir('photos/' + album.name,function(){
+            // Download and save photo
+            // TODO real extension
+            httpget.get(photo.source, 'photos/' + album.name + '/' + photo.id + ".jpg", function(err) {
+              if (err)
+                console.log(err);
+
+              // TODO sometimes hangs here
+              console.log('photo saved!');
+
+              photoCallback();
+            });
+          });
+        }, function(){
+          console.log();
+          console.log('album finished');
+          console.log();
+
+          albumCallback();
+        })
+      }, function(){
+        console.log();
+        console.log('well done!');
+        console.log();
+
+        t = process.hrtime(t);
+      })
+    });
+  });
+
 
 program
   .parse(process.argv);
