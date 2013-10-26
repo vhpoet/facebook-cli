@@ -41,23 +41,9 @@ Here is the link: https://facebook.com/522128874_10151999617388875
 Download photo albums of a friend.
 ```
 $ fb download 522128874
-photo saved!
-photo saved!
-photo saved!
-photo saved!
-photo saved!
-photo saved!
-
-album saved!
-
-photo saved!
-photo saved!
-photo saved!
-photo saved!
-photo saved!
-photo saved!
-
-album saved!
+Profile Pictures downloaded successfully.
+Mobile Uploads downloaded successfully.
+Cover Photos downloaded successfully.
 
 well done!
 ```
