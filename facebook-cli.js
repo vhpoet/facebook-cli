@@ -149,8 +149,6 @@ program
         console.log();
         console.log('well done!');
         console.log();
-
-        t = process.hrtime(t);
       })
     });
   });
