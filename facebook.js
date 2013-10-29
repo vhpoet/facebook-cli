@@ -1,16 +1,19 @@
 var sdk = require('facebook-node-sdk'),
-    async = require('async');
+    async = require('async'),
+    http = require('http');
 
 var api;
 
 var facebook = {};
 
 // Connect to facebook
-facebook.init = function(appId,secret,token) {
+facebook.init = function(appId,secret) {
   api = new sdk({
-    appID: appId,
+    appId: appId,
     secret: secret
-  }).setAccessToken(token);
+  });
+
+  return api;
 };
 
 // $ fb me
@@ -23,7 +26,7 @@ facebook.me = function (callback) {
 
     if (response)
       callback(response);
-  });
+  })
 };
 
 // $ fb post "{message}"
@@ -48,6 +51,7 @@ facebook.downloadAlbums = function (user,callback) {
       console.log(err);
       return;
     }
+    console.log('a','/' + user + '/albums?limit=500');
 
     async.eachLimit(albums.data,5,function(album, callback){
       // Our album object
