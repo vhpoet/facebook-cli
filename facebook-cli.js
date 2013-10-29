@@ -50,7 +50,7 @@ prompt.delimiter = "";
 /**
  * Program
  */
-// TODO get it from package.json
+// TODO version number should come from package.json
 program
   .version('0.0.1');
 
@@ -90,27 +90,29 @@ program
     });
   });
 
-// me
+// $ fb me
 program
   .command('me')
   .description('Get info about current user')
   .action(function(){
-    init(function(){
+    var action = function(){
       fb.me(function(data){
         console.log();
         console.log('You are '.grey + data.name.bold.cyan + '. Your ID is '.grey + data.id.bold.cyan);
         console.log(('Link to your profile: ' + ('https://facebook.com/' + data.username).underline).grey);
         console.log();
       });
-    });
+    };
+
+    init(action);
   });
 
-// post
+// $ fb post "{message}"
 program
   .command('post <msg>')
   .description('Post status update on your wall')
   .action(function(msg){
-    init(function(){
+    var action = function(){
       // TODO msg without " quotes. Also check all other calls.
       fb.post(msg,function(data){
         console.log();
@@ -118,15 +120,18 @@ program
         console.log(('Here is the link: ' + ('https://facebook.com/' + data.id).underline).grey);
         console.log();
       });
-    });
+    };
+
+    init(action);
   });
 
-// download photos
+// $ fb download {user}
 program
-  .command('download <user>')
+  .command('download:albums <user>')
   .description('Download user photo albums')
   .action(function(user){
-    init(function(){
+    var permissions = ['user_photos','friends_photos'];
+    var action = function(){
       fb.getAlbumsWithPhotos(user,function(albums){
         async.eachSeries(albums,function(album, albumCallback){
           var bar = new progress('[:bar :percent] Downloaded :current/:total',{
@@ -164,9 +169,10 @@ program
           console.log();
         })
       });
-    },['user_photos','friends_photos']);
-  });
+    };
 
+    init(action,permissions);
+  });
 
 program
   .parse(process.argv);

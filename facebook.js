@@ -16,7 +16,7 @@ facebook.init = function(appId,secret) {
   return api;
 };
 
-// $ fb me
+// Show info about current user
 facebook.me = function (callback) {
   api.api('/me', function(err, response) {
     if (err) {
@@ -29,7 +29,7 @@ facebook.me = function (callback) {
   })
 };
 
-// $ fb post "{message}"
+// Post a message to user's timeline
 facebook.post = function(message,callback) {
   api.api('/me/feed', 'post', {'message':message}, function(err,response) {
     if (err) {
@@ -42,7 +42,7 @@ facebook.post = function(message,callback) {
   });
 };
 
-// $ fb download {user}
+// Get user albums with their photos
 facebook.getAlbumsWithPhotos = function (user,callback) {
   var albs = [];
 
