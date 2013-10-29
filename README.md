@@ -37,7 +37,7 @@ Status update has been posted.
 Here is the link: https://facebook.com/522128874_10151999617388875
 ```
 
-### fb download {userID}
+### fb download:albums {userID}
 Download photo albums of a friend.
 ```
 $ fb download 522128874
