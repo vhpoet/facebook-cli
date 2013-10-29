@@ -43,7 +43,7 @@ facebook.post = function(message,callback) {
 };
 
 // $ fb download {user}
-facebook.downloadAlbums = function (user,callback) {
+facebook.getAlbumsWithPhotos = function (user,callback) {
   var albs = [];
 
   api.api('/' + user + '/albums?limit=500', function(err,albums){

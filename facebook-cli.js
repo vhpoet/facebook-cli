@@ -127,7 +127,7 @@ program
   .description('Download user photo albums')
   .action(function(user){
     init(function(){
-      fb.downloadAlbums(user,function(albums){
+      fb.getAlbumsWithPhotos(user,function(albums){
         async.eachSeries(albums,function(album, albumCallback){
           var bar = new progress('[:bar :percent] Downloaded :current/:total',{
             total: album.photos.length,
