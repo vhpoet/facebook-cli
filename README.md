@@ -37,10 +37,10 @@ Status update has been posted.
 Here is the link: https://facebook.com/522128874_10151999617388875
 ```
 
-### fb download:albums {userID}
+### fb download:albums {userID} {path}
 Download photo albums of a friend.
 ```
-$ fb download 522128874
+$ fb download 522128874 /users/user/friendphotos
 Profile Pictures downloaded successfully.
 Mobile Uploads downloaded successfully.
 Cover Photos downloaded successfully.

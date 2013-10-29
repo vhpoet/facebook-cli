@@ -24,7 +24,8 @@
     "progress": ">= 1.1.2",
     "http-get": ">= 0.5.10",
     "open": ">= 0.0.4",
-    "request": ">= 2.27.0"
+    "request": ">= 2.27.0",
+    "node-fs": ">= 0.1.7"
   },
   "readmeFilename": "README.md",
   "engines": {

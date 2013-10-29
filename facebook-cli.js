@@ -5,7 +5,7 @@
  */
 var program = require('commander'),
     prompt = require('prompt'),
-    fs = require('fs'),
+    fs = require('node-fs'),
     fb = require('./facebook'),
     nconf = require('nconf'),
     httpget = require('http-get'),
@@ -127,13 +127,22 @@ program
 
 // $ fb download {user}
 program
-  .command('download:albums <user>')
+  .command('download:albums <user> [path]')
   .description('Download user photo albums')
-  .action(function(user){
+  .action(function(user, path){
+    // If path has not been specified, current folder will be used.
+    if (!path) path = '.';
+
+    // Check if folder exists. If not, creates it.
+//    if (!fs.existsSync(path)) {
+//      fs.mkdirSync(path,0777,true);
+//    }
+
     var permissions = ['user_photos','friends_photos'];
     var action = function(){
       fb.getAlbumsWithPhotos(user,function(albums){
         async.eachSeries(albums,function(album, albumCallback){
+          // Progress bar properties
           var bar = new progress('[:bar :percent] Downloaded :current/:total',{
             total: album.photos.length,
             complete: '=',
@@ -142,12 +151,14 @@ program
             clear: true
           });
 
+          // Create album folder
+          fs.mkdirSync(path + '/' + album.name);
+
+          // Download images
           async.eachLimit(album.photos, 15, function(photo,photoCallback){
-            // Create album folder
-            fs.mkdir('photos/' + album.name,function(){
               // Download and save photo
               // TODO real extension
-              httpget.get(photo.source, 'photos/' + album.name + '/' + photo.id + ".jpg", function(err) {
+              httpget.get(photo.source, path + '/' + album.name + '/' + photo.id + ".jpg", function(err) {
                 // TODO better output
                 if (err)
                   console.log(err);
@@ -157,15 +168,17 @@ program
 
                 photoCallback();
               });
-            });
           }, function(){
             console.log(album.name.cyan + ' downloaded successfully.');
 
             albumCallback();
           })
         }, function(){
+          if (path === '.') path = 'current directory.';
+
           console.log();
-          console.log('well done!');
+          console.log('Well Done!');
+          console.log('All photos have been saved to ' + path);
           console.log();
         })
       });
