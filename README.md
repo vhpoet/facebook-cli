@@ -13,7 +13,7 @@ $ fb version
 
 ## Getting Started
 
-Before starting, you need to [create a facebook app](https://developers.facebook.com/apps), and tell facebook-cli about your credentials (App ID, App Secret, Access Token).
+Before starting, you need to [create a facebook app](https://developers.facebook.com/apps), and tell facebook-cli about your credentials (App ID, App Secret).
 
 ```
 $ fb config
