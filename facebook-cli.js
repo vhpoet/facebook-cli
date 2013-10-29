@@ -22,12 +22,17 @@ var configFile = __dirname + '/config.json';
 nconf.file({ file: configFile });
 
 // TODO Get long live access_token
-var init = function(callback){
+var init = function(callback,permissions){
   var appId = nconf.get('appId');
   var secret = nconf.get('secret');
 
   if (appId && secret) {
-    auth(appId,secret,fb.init(appId,secret),function(){
+    auth({
+      appId: appId,
+      secret: secret,
+      fb: fb.init(appId,secret),
+      permissions: permissions
+    },function(){
       callback();
     });
   } else {
@@ -123,7 +128,6 @@ program
   .action(function(user){
     init(function(){
       fb.downloadAlbums(user,function(albums){
-        console.log('albums',albums);
         async.eachSeries(albums,function(album, albumCallback){
           var bar = new progress('[:bar :percent] Downloaded :current/:total',{
             total: album.photos.length,
@@ -160,7 +164,7 @@ program
           console.log();
         })
       });
-    });
+    },['user_photos','friends_photos']);
   });
 
 

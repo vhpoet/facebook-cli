@@ -13,7 +13,7 @@ var configFile = __dirname + '/config.json';
  */
 nconf.file({ file: configFile });
 
-module.exports = function(appId,secret,facebook,callback){
+module.exports = function(params,callback){
 
   var getAccessToken = function() {
     var redirect_uri = 'http://localhost:3000/';
@@ -23,30 +23,30 @@ module.exports = function(appId,secret,facebook,callback){
       var code = querystring.parse(req.url)['/?code'];
 
       if (code) {
-        request("https://graph.facebook.com/oauth/access_token?"
-          + "client_id=" + appId
-          + "&client_secret=" + secret
-          + "&redirect_uri=" + redirect_uri
-          + "&code=" + code,
-          function(err,response,body) {
-            var token = querystring.parse(body).access_token;
+        var url = "https://graph.facebook.com/oauth/access_token?"
+            + "client_id=" + params.appId
+            + "&client_secret=" + params.secret
+            + "&redirect_uri=" + redirect_uri
+            + "&code=" + code;
 
-            if(token) {
-              facebook.setAccessToken(token);
-              nconf.set('token', token);
+        request(url, function(err,response,body) {
+          var token = querystring.parse(body).access_token;
 
-              // Save the configuration object
-              nconf.save();
+          if(token) {
+            params.fb.setAccessToken(token);
+            nconf.set('token', token);
 
-              callback(facebook);
+            // Save the configuration object
+            nconf.save();
 
-              // TODO close server doesn't work?
-              server.close();
-            } else {
-              console.log('Something went wrong.');
-            }
+            callback(params.fb);
+
+            // TODO close server doesn't work?
+            server.close();
+          } else {
+            console.log('Something went wrong.');
           }
-        )
+        })
       }
       else {
         console.log('Something went wrong.');
@@ -55,7 +55,14 @@ module.exports = function(appId,secret,facebook,callback){
       res.end('Now you are logged in. Go to the terminal!');
     }).listen(3000);
 
-    open('https://www.facebook.com/dialog/oauth?client_id=' + appId + '&redirect_uri=' + redirect_uri);
+    var codeUrl = 'https://www.facebook.com/dialog/oauth?client_id=' + params.appId + '&redirect_uri=' + redirect_uri;
+
+    // Get additional permissions
+    if (params.permissions) {
+      codeUrl += '&scope=' + params.permissions.join(",");
+    }
+
+    open(codeUrl);
   };
 
   // Get access token from memory
@@ -63,14 +70,29 @@ module.exports = function(appId,secret,facebook,callback){
 
   if (token) {
     // Set access token to facebook object
-    facebook.setAccessToken(token);
+    params.fb.setAccessToken(token);
 
     // Try with our access token
-    facebook.api('/me',function(err, response){
-      if (err)
+    params.fb.api('/me/permissions',function(err, response){
+      if (err) {
         getAccessToken();
-      else
-        callback(facebook);
+        return;
+      }
+      else {
+        if (params.permissions) {
+          var permissions = response.data[0];
+
+          // Check required permissions. if something is missing, get another access token.
+          for(var i = 0; i < params.permissions.length; i++){
+            if(!permissions[params.permissions[i]]) {
+              getAccessToken();
+              return;
+            }
+          }
+        }
+      }
+
+      callback(params.fb);
     });
   }
   else {

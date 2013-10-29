@@ -51,7 +51,6 @@ facebook.downloadAlbums = function (user,callback) {
       console.log(err);
       return;
     }
-    console.log('a','/' + user + '/albums?limit=500');
 
     async.eachLimit(albums.data,5,function(album, callback){
       // Our album object
