@@ -64,3 +64,7 @@ Whether you want to fix a bug or implement a new feature, the process is pretty 
 ## License
 
 Facebook CLI is released under the MIT license. See [LICENSE](https://github.com/vhpoet/facebook-cli/blob/master/LICENSE).
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/vhpoet/facebook-cli/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
